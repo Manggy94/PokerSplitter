@@ -8,4 +8,8 @@ plugins:
 nav:
   - Home: index.md
   - API Reference:
+    - splitter: splitter.md
+    - patterns: patterns.md
+    - main: main.md
+    - directories: directories.md
       
