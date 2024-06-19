@@ -6,7 +6,11 @@ A package to split poker history files
 [![PyPI version](https://badge.fury.io/py/pkrsplitter.svg)](https://badge.fury.io/py/pkrsplitter)
 ## Table of Contents
 
-
+- [Description](#description)
+- [Installation](#installation)
+- [Usage](#usage)
+- [License](#license)
+- [Documentation](#documentation)
 
 ## Description
 A package to split poker history files

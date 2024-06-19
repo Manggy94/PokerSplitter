@@ -4,9 +4,14 @@ A package to split poker history files
 
 [![Documentation Status](https://readthedocs.org/projects/pkrsplitter/badge/?version=latest)](https://pkrsplitter.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/pkrsplitter.svg)](https://badge.fury.io/py/pkrsplitter)
+
 ## Table of Contents
 
-
+- [Description](#description)
+- [Installation](#installation)
+- [Usage](#usage)
+- [License](#license)
+- [Documentation](#documentation)
 
 ## Description
 A package to split poker history files
@@ -68,7 +73,7 @@ This will result in overwriting the files if they already exist in the split dir
 This project is licensed under the MIT License -
 You can check out the full license [here](LICENSE.txt)
 
-##Documentation
+## Documentation
 
 The documentation can be found [here](https://pkrsplitter.readthedocs.io/en/latest/)
 
