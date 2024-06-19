@@ -30,7 +30,7 @@ cd PokerSplitter
 Add a .env file in the root directory with the following content:
 
 ```.env
-SOURCE_DIR=C:/Users/mangg/ManggyTracker/data
+SOURCE_DIR=path/to/source/dir
 ```
 
 You can also directly set the environment variable in your system.
