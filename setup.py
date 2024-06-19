@@ -3,7 +3,9 @@ from setuptools import setup, find_packages
 import json
 
 
-install_requires = []
+install_requires = [
+    "python-dotenv"
+]
 
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -29,9 +31,10 @@ setup(
     description="A package to split poker history files",
     long_description=Path("README.md").read_text(),
     long_description_content_type="text/markdown",
-    url="https://github.com/manggy94/",
+    url="https://github.com/manggy94/PokerSplitter",
     project_urls={
         "Bug Tracker": "https://github.com/manggy94//issues",
+        "Documentation": "https://pkrsplitter.readthedocs.io/en/latest/"
     },
     classifiers=classifiers,
     packages=find_packages(exclude=["tests", ".venv", "venv", "venv.*"]),

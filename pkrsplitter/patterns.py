@@ -1,0 +1,5 @@
+"""This module defines the RegEx patterns used by the pkrsplitter package."""
+FILENAME_PATTERN = r"(?P<year>\d{4})\D+(?P<month>\d{2})\D+(?P<day>\d{2})\D+\d+_(?P<tour_name>.+?)\((?P<tour_id>\d+)\)"
+SPLIT_PATTERN = r"\*\*\*\s+\n?|\n\n+"
+NEW_HAND_PATTERN = r"Winamax\s+Poker\s+-"
+HAND_ID_PATTERN = r"-\s+HandId:\s+#(?P<hand_id>[0-9-]+)\s+-\s+(?P<Variant>[A-Za-z ]+)\s+"
