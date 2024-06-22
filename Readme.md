@@ -10,7 +10,6 @@ A package to split poker history files
 - [Installation](#installation)
 - [Usage](#usage)
 - [License](#license)
-- [Documentation](#documentation)
 
 ## Description
 A package to split poker history files

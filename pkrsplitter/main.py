@@ -7,4 +7,5 @@ if __name__ == "__main__":
         raw_histories_directory=RAW_HISTORY_DIR,
         split_histories_directory=SPLIT_HISTORY_DIR
     )
-    splitter.split_files(check_exists=True)
+    splitter.split_files(check_dir_exists=False, check_file_exists=True)
+

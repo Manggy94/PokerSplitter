@@ -14,7 +14,8 @@ class FileSplitter:
         split_histories_directory (str): The directory to store the split history files
 
     Methods:
-        list_histories(): Lists all the history files in the raw directory and returns a list of their root, and file names
+        list_histories(): Lists all the history files in the raw directory and returns a list of their root, and file
+        names
         get_raw_path(root, filename): Returns the full path of a history file
         get_file_info(raw_path): Extracts the year, month, day, name, and tournament id of a history file
         get_destination_dir(raw_path): Returns the directory where the split files will be stored
@@ -24,7 +25,8 @@ class FileSplitter:
         get_split_texts(raw_path): Returns a list of the separate hand texts in a history file
         get_hand_id(hand_text): Extracts the hand id from a hand text
         get_id_list(raw_path): Returns a list of the hand ids in a history file
-        get_separated_hands_info(raw_path): Returns a list of tuples containing the destination path and the text of each hand
+        get_separated_hands_info(raw_path): Returns a list of tuples containing the destination path and the text of
+        each hand
         write_split_files(raw_path, check_exists): Writes the split files to the destination directory
         write_hand_text(hand_text, destination_path): Writes the text of a hand to a file
         split_files(check_exists): Splits all the history files in the raw directory
@@ -135,7 +137,7 @@ class FileSplitter:
             raw_path (str): The full path of the history file
 
         Returns:
-            split_exists (bool): True if the split files already exist, False otherwise
+            split_exists (bool): True if the split files directory already exist, False otherwise
         """
         destination_dir = self.get_destination_dir(raw_path)
         split_exists = os.path.exists(destination_dir) if destination_dir else False
@@ -239,20 +241,23 @@ class FileSplitter:
         separated_hands_info = list(zip(destination_path_list, split_texts))
         return separated_hands_info
 
-    def write_split_files(self, raw_path: str, check_exists: bool = True):
+    def write_split_files(self, raw_path: str, check_dir_exists: bool = False, check_file_exists: bool = True):
         """
         Writes the split files to the destination directory
         Args:
             raw_path (str): The full path of the history file
-            check_exists (bool): If True, checks if the split files already exist before writing
+            check_dir_exists (bool): If True, checks if the split files directory already exist before writing
+            check_file_exists (bool): If True, checks if the split files already exist before writing
         """
         file_info = self.get_file_info(raw_path)
         split_file_exists = self.check_split_exists(raw_path)
-        writing_condition = bool(file_info and not (split_file_exists and check_exists))
+        writing_condition = bool(file_info and not (split_file_exists and check_dir_exists))
         if writing_condition:
-            print(f"Splitting {raw_path}")
+            os.makedirs(self.get_destination_dir(raw_path), exist_ok=True)
             for destination_path, hand_text in self.get_separated_hands_info(raw_path):
-                self.write_hand_text(hand_text=hand_text, destination_path=destination_path)
+                if not (os.path.exists(destination_path) and check_file_exists) and hand_text:
+                    print(f"Writing {destination_path} ...")
+                    self.write_hand_text(hand_text=hand_text, destination_path=destination_path)
 
     @staticmethod
     def write_hand_text(hand_text: str, destination_path: str):
@@ -266,11 +271,12 @@ class FileSplitter:
         with open(destination_path, "w", encoding="utf-8") as file:
             file.write(hand_text)
 
-    def split_files(self, check_exists: bool = True):
+    def split_files(self, check_dir_exists: bool = False, check_file_exists: bool = True):
         """
         Splits all the history files in the raw directory
         Args:
-            check_exists (bool): If True, checks if the split files already exist before writing
+            check_dir_exists (bool): If True, checks if the split files directory already exist before writing
+            check_file_exists (bool): If True, checks if the split files already exist before writing
 
         Examples:
             >>> splitter = FileSplitter(raw_histories_directory="raw", split_histories_directory="split")
@@ -279,7 +285,7 @@ class FileSplitter:
         """
         threads = []
         for raw_path in self.raw_paths:
-            thread = Thread(target=self.write_split_files, args=(raw_path, check_exists))
+            thread = Thread(target=self.write_split_files, args=(raw_path, check_dir_exists, check_file_exists))
             thread.start()
             threads.append(thread)
         for thread in threads:
