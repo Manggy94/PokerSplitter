@@ -1,9 +1,12 @@
-Name                         Stmts   Miss  Cover
-------------------------------------------------
-pkrsplitter/__init__.py          0      0   100%
-pkrsplitter/directories.py      12     12     0%
-pkrsplitter/main.py              5      5     0%
-pkrsplitter/patterns.py          4      4     0%
-pkrsplitter/splitter.py         99     99     0%
-------------------------------------------------
-TOTAL                          120    120     0%
+Name                                   Stmts   Miss  Cover
+----------------------------------------------------------
+pkrsplitter/__init__.py                    0      0   100%
+pkrsplitter/directories.py                13     13     0%
+pkrsplitter/local_split_new_files.py       5      5     0%
+pkrsplitter/local_splitter.py             22     22     0%
+pkrsplitter/patterns.py                    4      4     0%
+pkrsplitter/s3_split_files.py              5      5     0%
+pkrsplitter/s3_splitter.py                40     40     0%
+pkrsplitter/splitter.py                   84     84     0%
+----------------------------------------------------------
+TOTAL                                    173    173     0%
