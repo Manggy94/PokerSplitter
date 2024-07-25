@@ -1,9 +1,9 @@
 """This module defines the FileSplitter class, which is used to split poker history files."""
 import os
-from splitter import FileSplitter
+from .abstract import AbstractFileSplitter
 
 
-class LocalFileSplitter(FileSplitter):
+class LocalFileSplitter(AbstractFileSplitter):
     """
     A class to split poker history files
     """

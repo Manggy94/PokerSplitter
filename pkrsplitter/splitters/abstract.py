@@ -1,12 +1,43 @@
-"""This module defines the FileSplitter class, which is used to split poker history files."""
+"""This module defines the AbstractFileSplitter class, which is used to split poker history files."""
 import re
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from pkrsplitter.patterns import NEW_HAND_PATTERN, HAND_ID_PATTERN
+from pkrsplitter.patterns.winamax import NEW_HAND_PATTERN, HAND_ID_PATTERN
 
 
-class FileSplitter(ABC):
+class AbstractFileSplitter(ABC):
     """
+    A class to split poker history files
+
+    Methods:
+        list_raw_histories_keys: Lists all the history files in the raw directory and returns a list of their root, and file names
+        get_destination_dir: Returns the directory where the split files will be stored
+        check_split_file_exists: Checks if the split files already exist
+        check_split_dir_exists: Checks if the split directory for the history file already exists
+        get_raw_text: Returns the text of a raw history file
+        split_raw_text: Splits a history file into separate hands
+        get_split_texts: Returns a list of the separate hand texts in a history file
+        get_hand_id: Extracts the hand id from a hand text
+        get_id_list: Returns a list of the hand ids in a history file
+        get_separated_hands_info: Returns a list of tuples containing the destination key and the text of each hand
+        write_hand_text: Writes the text of a hand to a file
+        write_split_files: Writes the split files to the destination key of the bucket
+        write_new_split_files: Writes the split files to the destination key of the bucket if they do not already exist
+        write_new_split_histories: Writes the split files to the destination key if the raw history file has never been split
+        split_files: Splits all the history files in the raw directory
+        split_new_files: Splits all the history files in the raw directory if the split files do not already exist
+        split_new_histories: Splits all the history files in the raw directory if the raw history file has never been split
+
+    Examples:
+        splitter = LocalFileSplitter(DATA_DIR)
+        splitter.split_files()
+
+        splitter = S3FileSplitter(BUCKET_NAME)
+        splitter.split_new_files()
+
+    See Also:
+        pkrsplitter.splitters.local.LocalFileSplitter
+        pkrsplitter.splitters.s3.S3FileSplitter
     """
     @abstractmethod
     def list_raw_histories_keys(self) -> list:

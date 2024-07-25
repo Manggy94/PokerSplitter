@@ -1,9 +1,9 @@
 """This module defines the FileSplitter class, which is used to split poker history files."""
 import boto3
-from splitter import FileSplitter
+from .abstract import AbstractFileSplitter
 
 
-class S3FileSplitter(FileSplitter):
+class S3FileSplitter(AbstractFileSplitter):
     """
     A class to split poker history files
     """

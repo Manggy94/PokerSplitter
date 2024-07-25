@@ -50,18 +50,20 @@ python -m pkrsplitter.main
 Usage in a script:
 
 ```python
-from pkrsplitter.splitter import FileSplitter
+from pkrsplitter.splitters.abstract import AbstractFileSplitter
 
-splitter = FileSplitter(raw_histories_directory='path/to/raw/dir', split_histories_directory='path/to/split/dir')
+splitter = AbstractFileSplitter(raw_histories_directory='path/to/raw/dir',
+                                split_histories_directory='path/to/split/dir')
 splitter.split_files()
 ```
 
 You can use the check_exists parameter to check if the files have already been split:
 
 ```python
-from pkrsplitter.splitter import FileSplitter
+from pkrsplitter.splitters.abstract import AbstractFileSplitter
 
-splitter = FileSplitter(raw_histories_directory='path/to/raw/dir', split_histories_directory='path/to/split/dir')
+splitter = AbstractFileSplitter(raw_histories_directory='path/to/raw/dir',
+                                split_histories_directory='path/to/split/dir')
 splitter.split_files(check_exists=True)
 ```
 This will result in overwriting the files if they already exist in the split directory.
