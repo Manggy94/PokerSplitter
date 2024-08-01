@@ -64,18 +64,6 @@ class AbstractFileSplitter(ABC):
         return destination_dir
 
     @abstractmethod
-    def check_split_file_exists(self, raw_key: str) -> bool:
-        """
-        Checks if the split files already exist
-        Args:
-            raw_key: The full key of the history file
-
-        Returns:
-            split_file_exists (bool): True if the split files already exist, False otherwise
-        """
-        pass
-
-    @abstractmethod
     def check_split_dir_exists(self, raw_key: str) -> bool:
         """
         Checks if the split directory for the history file already exists
@@ -155,12 +143,13 @@ class AbstractFileSplitter(ABC):
         Returns:
             id_list (list): A list of the hand ids in the history file
         """
-        try:
-            split_texts = self.get_split_texts(raw_key)
-            id_list = [self.get_hand_id(hand) for hand in split_texts]
-            return id_list
-        except Exception:
-            print(f"Error in get_id_list for {raw_key}")
+        split_texts = self.get_split_texts(raw_key)
+        id_list = [self.get_hand_id(hand) for hand in split_texts]
+        return id_list
+        # try:
+        #    pass
+        # except Exception:
+        #     print(f"Error in get_id_list for {raw_key}")
 
     def get_separated_hands_info(self, raw_key: str) -> list:
         """
@@ -171,19 +160,26 @@ class AbstractFileSplitter(ABC):
         Returns:
             separated_hands_info (list): A list of tuples containing the destination path and the text of each hand
         """
-        destination_dir = self.get_destination_dir(raw_key)
-        destination_path_list = [f"{destination_dir}/{hand_id}.txt" for hand_id in self.get_id_list(raw_key)]
+        id_list = self.get_id_list(raw_key)
         split_texts = self.get_split_texts(raw_key)
-        separated_hands_info = list(zip(destination_path_list, split_texts))
-        return separated_hands_info
+        destination_dir = self.get_destination_dir(raw_key)
+        try:
+            destination_key_list = [f"{destination_dir}/{hand_id}.txt" for hand_id in id_list]
+            separated_hands_info = list(zip(destination_key_list, split_texts))
+            return separated_hands_info
+        except TypeError:
+            print(f"Error in get_separated_hands_info for {raw_key}")
+            print(len(id_list))
+            print(len(split_texts))
+            raise TypeError
 
     @abstractmethod
-    def write_hand_text(self, hand_text: str, destination_path: str):
+    def write_hand_text(self, hand_text: str, destination_key: str):
         """
         Writes the text of a hand to a file
         Args:
             hand_text: The text of the hand
-            destination_path: The path of the destination file
+            destination_key: The path of the destination file
         """
         pass
 
@@ -195,18 +191,18 @@ class AbstractFileSplitter(ABC):
         """
         destination_dir = self.get_destination_dir(raw_key)
         print(f"Splitting {raw_key} to {destination_dir}")
-        for destination_path, hand_text in self.get_separated_hands_info(raw_key):
+        for destination_key, hand_text in self.get_separated_hands_info(raw_key):
             if hand_text:
-                self.write_hand_text(hand_text=hand_text, destination_path=destination_path)
+                self.write_hand_text(hand_text=hand_text, destination_key=destination_key)
 
+    @abstractmethod
     def write_new_split_files(self, raw_key: str):
         """
         Writes the split files to the destination key of the bucket if they do not already exist
         Args:
             raw_key:
         """
-        if not self.check_split_file_exists(raw_key):
-            self.write_split_files(raw_key)
+        pass
 
     def write_new_split_histories(self, raw_key: str):
         """
@@ -221,7 +217,7 @@ class AbstractFileSplitter(ABC):
         """
         Splits all the history files in the raw directory
         """
-        history_keys = self.list_raw_histories_keys()
+        history_keys = self.list_raw_histories_keys()[::-1]
         with (ThreadPoolExecutor(max_workers=10)) as executor:
             futures = [executor.submit(self.write_split_files, raw_key) for raw_key in history_keys]
             for future in as_completed(futures):
@@ -231,7 +227,7 @@ class AbstractFileSplitter(ABC):
         """
         Splits all the history files in the raw directory if the split files do not already exist
         """
-        history_keys = self.list_raw_histories_keys()
+        history_keys = self.list_raw_histories_keys()[::-1]
         with (ThreadPoolExecutor(max_workers=10)) as executor:
             futures = [executor.submit(self.write_new_split_files, raw_key) for raw_key in history_keys]
             for future in as_completed(futures):
@@ -241,7 +237,7 @@ class AbstractFileSplitter(ABC):
         """
         Splits all the history files in the raw directory if the raw history file has never been split
         """
-        history_keys = self.list_raw_histories_keys()
+        history_keys = self.list_raw_histories_keys()[::-1]
         with (ThreadPoolExecutor(max_workers=10)) as executor:
             futures = [executor.submit(self.write_new_split_histories, raw_key) for raw_key in history_keys]
             for future in as_completed(futures):

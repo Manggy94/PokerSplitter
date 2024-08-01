@@ -27,18 +27,6 @@ class LocalFileSplitter(AbstractFileSplitter):
                           for file in files if file.endswith(".txt")]
         return histories_list
 
-    def check_split_file_exists(self, raw_key: str) -> bool:
-        """
-        Checks if the split files already exist
-        Args:
-            raw_key: The full key of the history file
-
-        Returns:
-            split_file_exists (bool): True if the split files already exist, False otherwise
-        """
-        destination_dir = self.get_destination_dir(raw_key)
-        return os.path.exists(destination_dir)
-
     def check_split_dir_exists(self, raw_key: str) -> bool:
         """
         Checks if the split directory for the history file already exists
@@ -61,10 +49,26 @@ class LocalFileSplitter(AbstractFileSplitter):
             raw_text (str): The raw text of the history file
 
         """
-        with open(raw_key, "r", encoding="utf-8") as file:
-            raw_text = file.read()
+        with open(raw_key, "r", encoding="latin-1") as file:
+            try:
+                raw_text = file.read()
+            except UnicodeDecodeError:
+                #Try to read the file with a different encoding
+                # with open(raw_key, "r", encoding="latin-1") as file:
+                #     raw_text = file.read()
+                #
+                # print(raw_text)
+                raise UnicodeDecodeError
         return raw_text
 
-    def write_hand_text(self, hand_text: str, destination_path: str):
-        with open(destination_path, "w", encoding="utf-8") as file:
+    def write_hand_text(self, hand_text: str, destination_key: str):
+        destination_dir = os.path.dirname(destination_key)
+        os.makedirs(destination_dir, exist_ok=True)
+        with open(destination_key, "w", encoding="latin-1") as file:
             file.write(hand_text)
+
+    def write_new_split_files(self, raw_key: str):
+        for destination_key, hand_text in self.get_separated_hands_info(raw_key):
+            if hand_text and not os.path.exists(destination_key):
+                print(f"Creating {destination_key} from {raw_key} ")
+                self.write_hand_text(hand_text=hand_text, destination_key=destination_key)

@@ -30,20 +30,6 @@ class S3FileSplitter(AbstractFileSplitter):
         keys = [obj["Key"] for page in pages for obj in page.get("Contents", [])]
         return keys
 
-    def check_split_file_exists(self, raw_key: str) -> bool:
-        """
-        Checks if the split files already exist
-        Args:
-            raw_key: The full key of the history file
-
-        Returns:
-            split_file_exists (bool): True if the split files already exist, False otherwise
-        """
-        destination_dir = self.get_destination_dir(raw_key)
-        response = self.s3.list_objects_v2(Bucket=self.bucket_name, Prefix=destination_dir)
-        split_file_exists = bool(response.get("Contents"))
-        return split_file_exists
-
     def check_split_dir_exists(self, raw_key: str) -> bool:
         """
         Checks if the split directory for the history file already exists
@@ -75,22 +61,12 @@ class S3FileSplitter(AbstractFileSplitter):
     def write_hand_text(self, hand_text: str, destination_path: str):
         self.s3.put_object(Bucket=self.bucket_name, Key=destination_path, Body=hand_text.encode('utf-8'))
 
-
-def lambda_handler(event, context):
-    print(f"Received event: {event}")
-    bucket_name = event['Records'][0]['s3']['bucket']['name']
-    key = event['Records'][0]['s3']['object']['key']
-    print(f"Splitting file {key}")
-    try:
-        splitter = S3FileSplitter(bucket_name)
-        splitter.write_split_files(key)
-        return {
-            'statusCode': 200,
-            'body': f'File {key} processed successfully as split hands to {splitter.get_destination_dir(key)}'
-        }
-    except Exception as e:
-        print(f"Error in lambda_handler: {e}")
-        return {
-            'statusCode': 500,
-            'body': f'Error processing file {key}: {e}'
-        }
+    def write_new_split_files(self, raw_key: str):
+        destination_dir = self.get_destination_dir(raw_key)
+        print(f"Splitting {raw_key} to {destination_dir}")
+        for destination_key, hand_text in self.get_separated_hands_info(raw_key):
+            destination_response = self.s3.list_objects_v2(Bucket=self.bucket_name, Prefix=destination_key)
+            destination_exists = bool(destination_response.get("Contents"))
+            if hand_text and not destination_exists:
+                self.write_hand_text(hand_text=hand_text, destination_path=destination_key)
+                print(f"Created {destination_key} from {raw_key}")
