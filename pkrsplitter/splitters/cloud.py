@@ -3,7 +3,7 @@ import boto3
 from .abstract import AbstractFileSplitter
 
 
-class S3FileSplitter(AbstractFileSplitter):
+class CloudFileSplitter(AbstractFileSplitter):
     """
     A class to split poker history files
     """

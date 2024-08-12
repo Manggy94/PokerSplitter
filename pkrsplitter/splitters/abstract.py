@@ -32,7 +32,7 @@ class AbstractFileSplitter(ABC):
         splitter = LocalFileSplitter(DATA_DIR)
         splitter.split_files()
 
-        splitter = S3FileSplitter(BUCKET_NAME)
+        splitter = CloudFileSplitter(BUCKET_NAME)
         splitter.split_new_files()
 
     See Also:

@@ -1,0 +1,2 @@
+Total time for 100 raw files splittings: 68.09 seconds
+Average time: 0.68 seconds, or 680.9 milliseconds per raw file of 68.4 hands, so 10.0 milliseconds per hand
