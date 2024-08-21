@@ -17,6 +17,7 @@ class LocalFileSplitter(AbstractFileSplitter):
         self.raw_dir = os.path.join(data_dir, "histories", "raw")
         self.correction_raw_keys_file_key = os.path.join(data_dir, "correction_raw_keys.txt")
         self.correction_split_keys_file_key = os.path.join(data_dir, "correction_split_keys.txt")
+        print(f"Local File Splitter initialized with data directory: {data_dir}")
 
     def list_raw_histories_keys(self, directory_key: str = None) -> list:
         """

@@ -20,6 +20,6 @@ pkrsplitter/settings.py                            13     13     0%
 pkrsplitter/splitters/__init__.py                   0      0   100%
 pkrsplitter/splitters/abstract.py                 105    105     0%
 pkrsplitter/splitters/cloud.py                     39     39     0%
-pkrsplitter/splitters/local.py                     52     52     0%
+pkrsplitter/splitters/local.py                     53     53     0%
 -------------------------------------------------------------------
-TOTAL                                             266    266     0%
+TOTAL                                             267    267     0%

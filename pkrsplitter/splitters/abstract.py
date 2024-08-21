@@ -225,8 +225,8 @@ class AbstractFileSplitter(ABC):
         Splits all the history files in the raw directory
         """
         history_keys = self.list_raw_histories_keys()[::-1]
-        with (ThreadPoolExecutor()) as executor:
-            futures = [executor.submit(self.write_split_files, raw_key) for raw_key in history_keys]
+        with ThreadPoolExecutor() as executor:
+            futures = {executor.submit(self.write_split_files, raw_key) for raw_key in history_keys}
             for future in as_completed(futures):
                 future.result()
 
@@ -235,8 +235,8 @@ class AbstractFileSplitter(ABC):
         Splits all the history files in the raw directory if the split files do not already exist
         """
         history_keys = self.list_raw_histories_keys()[::-1]
-        with (ThreadPoolExecutor()) as executor:
-            futures = [executor.submit(self.write_new_split_files, raw_key) for raw_key in history_keys]
+        with ThreadPoolExecutor() as executor:
+            futures = {executor.submit(self.write_new_split_files, raw_key) for raw_key in history_keys}
             for future in as_completed(futures):
                 future.result()
 
@@ -245,8 +245,8 @@ class AbstractFileSplitter(ABC):
         Splits all the history files in the raw directory if the raw history file has never been split
         """
         history_keys = self.list_raw_histories_keys()[::-1]
-        with (ThreadPoolExecutor()) as executor:
-            futures = [executor.submit(self.write_new_split_histories, raw_key) for raw_key in history_keys]
+        with ThreadPoolExecutor() as executor:
+            futures = {executor.submit(self.write_new_split_histories, raw_key) for raw_key in history_keys}
             for future in as_completed(futures):
                 future.result()
 
@@ -265,7 +265,7 @@ class AbstractFileSplitter(ABC):
         print(f"There are {len(raw_keys)} raw files to split.\n")
         self.write_file_from_list(self.correction_split_keys_file_key, destination_keys)
         with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(self.write_new_split_files, raw_key) for raw_key in raw_keys]
+            futures = {executor.submit(self.write_new_split_files, raw_key) for raw_key in raw_keys}
             for future in as_completed(futures):
                 future.result()
         self.write_file(self.correction_raw_keys_file_key, "")
