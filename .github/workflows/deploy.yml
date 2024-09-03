@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       package_name: pkrsplitter
-      package_image: ${{ secrets.ECR_REPOSITORY_URI }}/pkrsplitter:latest
+      registry: ${{ secrets.ECR_REPOSITORY_URI }}/${{ env.package_name }}
+      package_image: ${{ env.registry }}:latest
       ECR_REPOSITORY_URI: ${{ secrets.ECR_REPOSITORY_URI }}
 
     steps:
@@ -33,8 +34,11 @@ jobs:
       with:
         region: ${{ secrets.AWS_REGION }}
 
-    - name: Build, tag, and push image to Amazon ECR
+    - name: Create or update ECR repository
+      run: |
+        aws ecr describe-repositories --repository-names ${{ env.registry }} || aws ecr create-repository --repository-name ${{ env.registry }}
 
+    - name: Build, tag, and push image to Amazon ECR
       run: |
         docker build -t ${{ env.package_image }} .
         docker push ${{ env.package_image }}
