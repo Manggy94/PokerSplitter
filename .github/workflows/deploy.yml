@@ -10,9 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       package_name: pkrsplitter
-      registry: ${{ secrets.ECR_REPOSITORY_URI }}/${{ env.package_name }}
-      package_image: ${{ env.registry }}:latest
-      ECR_REPOSITORY_URI: ${{ secrets.ECR_REPOSITORY_URI }}
+      registry: ${{ secrets.ECR_REPOSITORY_URI }}/pkrsplitter
+      package_image: ${{ secrets.ECR_REPOSITORY_URI }}/pkrsplitter:latest
 
     steps:
     - name: Checkout code
