@@ -10,7 +10,7 @@ class AbstractFileSplitter(ABC):
     A class to split poker history files
 
     Methods:
-        list_raw_histories_keys: Lists all the history files in the raw directory and returns a list of their root, and file names
+        list_raw_histories_keys: Lists all the history files in the raw directory and returns a list of their key
         get_destination_dir: Returns the directory where the split files will be stored
         check_split_file_exists: Checks if the split files already exist
         check_split_dir_exists: Checks if the split directory for the history file already exists
@@ -21,12 +21,11 @@ class AbstractFileSplitter(ABC):
         get_id_list: Returns a list of the hand ids in a history file
         get_separated_hands_info: Returns a list of tuples containing the destination key and the text of each hand
         write_split_files: Writes the split files to the destination key of the bucket
-        write_new_split_files: Writes the split files to the destination key of the bucket if they do not already exist
-        write_new_split_histories: Writes the split files to the destination key if the raw history file has never been split
+        write_new_split_files: Writes the split files that do not already exist
+        write_new_split_histories: Writes the split files for raw files that have never been split
         split_files: Splits all the history files in the raw directory
-        split_new_files: Splits all the history files in the raw directory if the split files do not already exist
-        split_new_histories: Splits all the history files in the raw directory if the raw history file has never been split
-
+        split_new_files: Splits all the history files that have not already been split
+        split_new_histories: Splits the raw history files for raw files that have never been split
     Examples:
         splitter = LocalFileSplitter(DATA_DIR)
         splitter.split_files()
@@ -47,8 +46,7 @@ class AbstractFileSplitter(ABC):
     @abstractmethod
     def list_raw_histories_keys(self, directory_key: str = None) -> list:
         """
-         Lists all the history files in the raw directory and returns a list of their root, and file names
-
+         Lists all the history files in the raw directory and returns a list of their key
         Returns:
             list: A list of dictionaries containing the root and filename of the history files
         """
@@ -192,7 +190,7 @@ class AbstractFileSplitter(ABC):
 
     def write_split_files(self, raw_key: str):
         """
-        Writes the split files to the destination key of the bucket
+        Writes the split files to the split directory
         Args:
             raw_key (str): The path of the history file
         """
@@ -205,7 +203,7 @@ class AbstractFileSplitter(ABC):
     @abstractmethod
     def write_new_split_files(self, raw_key: str):
         """
-        Writes the split files to the destination key of the bucket if they do not already exist
+        Writes the split files that do not already exist
         Args:
             raw_key:
         """
@@ -213,7 +211,7 @@ class AbstractFileSplitter(ABC):
 
     def write_new_split_histories(self, raw_key: str):
         """
-        Writes the split files to the destination key if the raw history file has never been split
+        Writes the split files for raw files that have never been split
         Args:
             raw_key: The key of the raw history file
         """
@@ -224,6 +222,7 @@ class AbstractFileSplitter(ABC):
         """
         Splits all the history files in the raw directory
         """
+        print(f"Splitting history files from {self.raw_dir}...\n")
         history_keys = self.list_raw_histories_keys()[::-1]
         with ThreadPoolExecutor() as executor:
             futures = {executor.submit(self.write_split_files, raw_key) for raw_key in history_keys}
@@ -232,7 +231,7 @@ class AbstractFileSplitter(ABC):
 
     def split_new_files(self):
         """
-        Splits all the history files in the raw directory if the split files do not already exist
+        Splits all the history files that have not already been split
         """
         history_keys = self.list_raw_histories_keys()[::-1]
         with ThreadPoolExecutor() as executor:
@@ -242,7 +241,7 @@ class AbstractFileSplitter(ABC):
 
     def split_new_histories(self):
         """
-        Splits all the history files in the raw directory if the raw history file has never been split
+        Splits the raw history files for raw files that have never been split
         """
         history_keys = self.list_raw_histories_keys()[::-1]
         with ThreadPoolExecutor() as executor:
@@ -252,7 +251,7 @@ class AbstractFileSplitter(ABC):
 
     def split_correction_files(self):
         """
-        Split the history files to correct. It takes the raw keys from the correction_raw_keys.txt file and splits them.
+        Split the history files to correct.
         Returns:
 
         """

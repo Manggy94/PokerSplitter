@@ -1,14 +1,13 @@
 """This module defines the directories used by the pkrsplitter package."""
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+# print all environment variables
 
-DATA_DIR = os.environ.get("DATA_DIR")
+DATA_DIR = os.environ.get("POKER_DATA_DIR")
 HISTORY_DIR = os.path.join(DATA_DIR, "histories")
 RAW_HISTORY_DIR = os.path.join(HISTORY_DIR, "raw")
 SPLIT_HISTORY_DIR = os.path.join(HISTORY_DIR, "split")
-BUCKET_NAME = os.environ.get("BUCKET_NAME")
+BUCKET_NAME = os.environ.get("POKER_AWS_BUCKET_NAME")
 
 if __name__ == "__main__":
     print(f"Source directory: {DATA_DIR}")

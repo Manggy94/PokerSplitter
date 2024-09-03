@@ -1,0 +1,16 @@
+awscli==1.33.26
+coverage==7.5.3
+
+memory-profiler==0.61.0
+
+mkdocs==1.6.0
+mkdocs-autorefs==1.0.1
+mkdocs-get-deps==0.2.0
+mkdocstrings==0.25.1
+mkdocstrings-python==1.10.4
+numpy==2.1.0
+
+pandas==2.2.2
+pkginfo==1.11.1
+
+twine==5.1.0

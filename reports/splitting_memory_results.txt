@@ -1,0 +1,26 @@
+Filename: C:\Users\mangg\projects\PokerSplitter\tests\speed_test.py
+
+Line #    Mem usage    Increment  Occurrences   Line Contents
+=============================================================
+    19     61.1 MiB     61.1 MiB           1   @profile(stream=fp)
+    20                                         def get_average_time(main_function, files_list):
+    21     61.1 MiB      0.0 MiB           1       last_10_files = files_list[-10:]
+    22     61.1 MiB      0.0 MiB           1       print("Splitting last 10 files 10 times each")
+    23     61.1 MiB      0.0 MiB           1       start = time.time()
+    24     61.8 MiB     -0.3 MiB          11       for _ in range(10):
+    25     61.8 MiB     -3.0 MiB         110           for file_key in last_10_files:
+    26     61.8 MiB     -2.1 MiB         100               main_function(file_key)
+    27     61.7 MiB     -0.1 MiB           1       end = time.time()
+    28     61.7 MiB      0.0 MiB           1       total_time = end - start
+    29     61.7 MiB      0.0 MiB           1       average_time = total_time / 100
+    30     61.7 MiB      0.0 MiB           1       total_time_text = f"\nTotal time for 100 files: {total_time:.2f} seconds\n"
+    31     61.7 MiB      0.0 MiB           1       average_time_text = f"Average time: {average_time:.2f} seconds, or {average_time*1000:.1f} milliseconds per file.\n"
+    32     61.7 MiB      0.0 MiB           1       print(total_time_text)
+    33     61.7 MiB      0.0 MiB           1       print(average_time_text)
+    34     61.7 MiB      0.0 MiB           1       return {
+    35     61.7 MiB      0.0 MiB           1           "total_time_text": total_time_text,
+    36     61.7 MiB      0.0 MiB           1           "average_time_text": average_time_text,
+    37     61.7 MiB      0.0 MiB           1           "average_time": average_time,
+    38                                             }
+
+

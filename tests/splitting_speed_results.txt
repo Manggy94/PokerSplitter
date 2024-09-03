@@ -1,2 +1,4 @@
-Total time for 100 raw files splittings: 64.80 seconds
-Average time: 0.65 seconds, or 648.0 milliseconds per raw file of 68.4 hands, so 9.5 milliseconds per hand
+
+Total time for 100 files: 99.47 seconds
+Average time: 0.99 seconds, or 994.7 milliseconds per file.
+Minimum time: 6.96 seconds with 1000 concurrent functions and 1 batch size
