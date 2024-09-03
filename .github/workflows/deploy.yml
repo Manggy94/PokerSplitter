@@ -9,9 +9,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      package_name: pkrsplitter
-      registry: ${{ secrets.ECR_REPOSITORY_URI }}/pkrsplitter
-      package_image: ${{ secrets.ECR_REPOSITORY_URI }}/pkrsplitter:latest
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      AWS_NAMESPACE: ${{ secrets.AWS_NAMESPACE }}
+      AWS_PACKAGE_NAME: ${{ secrets.AWS_PACKAGE_NAME }}
+      REPOSITORY_NAME: ${{ secrets.AWS_NAMESPACE }}/{{ secrets.AWS_PACKAGE_NAME }}
+      TAG: latest
+      IMAGE_NAME: ${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:{{ env.TAG }}
+      IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:{{ env.TAG }}
 
     steps:
     - name: Checkout code
@@ -25,7 +30,7 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v3
 
     - name: Log in to Amazon ECR
       id: login-ecr
@@ -35,12 +40,14 @@ jobs:
 
     - name: Create or update ECR repository
       run: |
-        aws ecr describe-repositories --repository-names ${{ env.registry }} || aws ecr create-repository --repository-name ${{ env.registry }}
+        aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} >/dev/null 2>&1 || \
+        aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
+
 
     - name: Build, tag, and push image to Amazon ECR
       run: |
-        docker build -t ${{ env.package_image }} .
-        docker push ${{ env.package_image }}
+        docker build -t ${{ env.IMAGE_NAME }} .
+        docker push ${{ env.IMAGE_NAME }}
 
 #    - name: Deploy to AWS Lambda
 #      uses: appleboy/lambda-action@master
