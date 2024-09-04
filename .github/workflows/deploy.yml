@@ -15,7 +15,7 @@ jobs:
       AWS_PACKAGE_NAME: ${{ secrets.AWS_PACKAGE_NAME }}
       REPOSITORY_NAME: ${{ secrets.AWS_NAMESPACE }}/{{ secrets.AWS_PACKAGE_NAME }}
       TAG: latest
-      IMAGE_NAME: ${{ secrets.AWS_NAMESPACE }}/{{ secrets.AWS_PACKAGE_NAME }}:latest
+      IMAGE_NAME: ${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:latest
       IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/{{ secrets.AWS_NAMESPACE }}/{{ secrets.AWS_PACKAGE_NAME }}:latest
 
     steps:
@@ -31,7 +31,8 @@ jobs:
 
     - name: Build docker image
       run: |
-        docker build -t pokerbrain/pkrsplitter:latest .
+        echo "Building the Docker image ${{ env.IMAGE_NAME }}"
+        docker build -t ${{ env.IMAGE_NAME}} .
 
     - name: Log in to Amazon ECR
       id: login-ecr
