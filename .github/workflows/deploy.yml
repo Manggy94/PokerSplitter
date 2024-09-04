@@ -13,7 +13,7 @@ jobs:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       AWS_NAMESPACE: ${{ secrets.AWS_NAMESPACE }}
       AWS_PACKAGE_NAME: ${{ secrets.AWS_PACKAGE_NAME }}
-      REPOSITORY_NAME: ${{ secrets.AWS_NAMESPACE }}/{{ secrets.AWS_PACKAGE_NAME }}
+      REPOSITORY_NAME: ${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}
       TAG: latest
       IMAGE_NAME: ${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:latest
       IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/{{ secrets.AWS_NAMESPACE }}/{{ secrets.AWS_PACKAGE_NAME }}:latest
