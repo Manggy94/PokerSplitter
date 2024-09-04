@@ -15,8 +15,8 @@ jobs:
       AWS_PACKAGE_NAME: ${{ secrets.AWS_PACKAGE_NAME }}
       REPOSITORY_NAME: ${{ secrets.AWS_NAMESPACE }}/{{ secrets.AWS_PACKAGE_NAME }}
       TAG: latest
-      IMAGE_NAME: ${{ secrets.AWS_NAMESPACE }}/{{ secrets.AWS_PACKAGE_NAME }}:latest
-      IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:latest
+      IMAGE_NAME: ${{ secrets.AWS_NAMESPACE }}/{{ secrets.AWS_PACKAGE_NAME }}:{{ env.TAG }}
+      IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_NAME }}
 
     steps:
     - name: Checkout code
@@ -28,9 +28,6 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
 
     - name: Build docker image
       run: |
