@@ -32,6 +32,10 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
+    - name: Build docker image
+      run: |
+        docker build -t ${{ env.IMAGE_NAME }} .
+
     - name: Log in to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
@@ -40,13 +44,12 @@ jobs:
 
     - name: Create or update ECR repository
       run: |
-        aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} >/dev/null 2>&1 || \
+#        aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} >/dev/null 2>&1 || \
         aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
 
 
-    - name: Build, tag, and push image to Amazon ECR
+    - name: Push image to Amazon ECR
       run: |
-        docker build -t ${{ env.IMAGE_NAME }} .
         docker push ${{ env.IMAGE_NAME }}
 
 #    - name: Deploy to AWS Lambda
