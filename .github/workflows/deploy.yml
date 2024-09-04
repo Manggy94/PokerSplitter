@@ -18,6 +18,9 @@ jobs:
       IMAGE_NAME: ${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:latest
       REGISTRY_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
       IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:latest
+      COMMIT_HASH: ${{ github.sha }}
+      COMMIT_TAG: ${{ github.ref }}
+
 
     steps:
     - name: Checkout code
