@@ -16,6 +16,7 @@ jobs:
       REPOSITORY_NAME: ${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}
       TAG: latest
       IMAGE_NAME: ${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:latest
+      REGISTRY_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
       IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/{{ secrets.AWS_NAMESPACE }}/{{ secrets.AWS_PACKAGE_NAME }}:latest
 
     steps:
@@ -42,8 +43,11 @@ jobs:
 
     - name: Create or update ECR repository
       run: |
-        aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
+        aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} || aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
 
+    - name: Login Docker to Amazon ECR
+      run: |
+        docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) ${{ env.REGISTRY_URI }}
 
     - name: Push image to Amazon ECR
       run: |
