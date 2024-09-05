@@ -1,1 +1,12 @@
-{}
+{
+  "functions": [
+    {
+      "functionName": "history_splitter",
+      "description": "Split the raw history into multiple files, each corresponding to a single hand history",
+      "runtime": "python3.12",
+      "handler": "pkrsplitter.lambda.history_splitter.lambda_handler",
+      "functionRoleName": "LambdaS3FilesManager",
+      "packageName": "pkrsplitter"
+    }
+  ]
+}
