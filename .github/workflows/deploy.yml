@@ -26,11 +26,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Read lambda_params.json
+    - name: Read lambda_params.json and set as environment variable
       id: read-json
       run: |
         echo "LAMBDA_PARAMS=$(jq -c . < config/lambda_params.json)" >> $GITHUB_ENV
 #        echo '${{ fromJson(env.LAMBDA_PARAMS).functions }}'
+
+    - name: Extract Lambda functionName
+      id: extract-function-name
+      run: |
+        echo "LAMBDA_FUNCTION_NAME=$(echo ${{ fromJson(env.LAMBDA_PARAMS).functions[0].functionName }})" >> $GITHUB_ENV
+
+    - name: Get function from function_name
+      id: get-function
+      run: |
+        aws lambda get-function --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
 
 
     - name: Configure AWS credentials
