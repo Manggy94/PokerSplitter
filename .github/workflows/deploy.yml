@@ -66,9 +66,11 @@ jobs:
     - name: Read lambda_params.json
       id: read-json
       run: |
-        json_text=$(cat config/lambda_params.json)
-        echo $json_text
-        echo $(fromJson($json_text))
+        echo 'LAMBDA_PARAMS<<EOF' >> $GITHUB_ENV
+        cat config/lambda_params.json >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
+        echo '${{ fromJson(env.LAMBDA_PARAMS) }}'
+#        echo $(fromJson($json_text))
 #        echo $(fromJson(cat config/lambda_params.json).functions[0])
 #
 #    - name: Extract Lambda functionName
