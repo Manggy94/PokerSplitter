@@ -41,7 +41,7 @@ jobs:
     - name: Build docker image
       run: |
         echo "Building the Docker image ${{ env.IMAGE_NAME }}"
-        docker build -t ${{ env.IMAGE_NAME}} . --PACKAGE_NAME ${{ fromJson(env.LAMBDA_PARAMS).functions[0].packageName }})
+        docker build -build_arg PACKAGE_NAME=${{ fromJson(env.LAMBDA_PARAMS).functions[0].packageName }}) -t ${{ env.IMAGE_NAME}} . -
 
     - name: Log in to Amazon ECR
       id: login-ecr
