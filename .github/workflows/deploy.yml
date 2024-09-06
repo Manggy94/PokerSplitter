@@ -67,7 +67,8 @@ jobs:
       id: read-json
       run: |
         json_text=$(cat config/lambda_params.json)
-        echo fromJson($json_text)
+        echo $json_text
+        echo $(fromJson($json_text))
 #        echo $(fromJson(cat config/lambda_params.json).functions[0])
 #
 #    - name: Extract Lambda functionName
