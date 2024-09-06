@@ -38,6 +38,10 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
+    - name: Get python Version from lambda_params.json runtime
+      run: |
+        echo "PYTHON_VERSION=$(echo ${{ fromJson(env.LAMBDA_PARAMS).functions[0].runtime }})" | sed 's/python//' >> $GITHUB_ENV
+
     - name: Build docker image
       run: |
         echo "Building the Docker image ${{ env.IMAGE_NAME }}"
