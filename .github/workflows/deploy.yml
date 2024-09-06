@@ -30,7 +30,7 @@ jobs:
       id: read-json
       run: |
         echo "LAMBDA_PARAMS=$(jq -c . < config/lambda_params.json)" >> $GITHUB_ENV
-        echo '${{ fromJson(env.LAMBDA_PARAMS).functions }}'
+#        echo '${{ fromJson(env.LAMBDA_PARAMS).functions }}'
 
 
     - name: Configure AWS credentials
