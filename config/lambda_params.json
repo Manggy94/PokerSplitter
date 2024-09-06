@@ -6,7 +6,9 @@
       "runtime": "python3.12",
       "handler": "pkrsplitter.lambda.history_splitter.lambda_handler",
       "functionRoleName": "LambdaS3FilesManager",
-      "packageName": "pkrsplitter"
+      "packageName": "pkrsplitter",
+      "uselessPackageDirs": [],
+      "uselessPackageFiles": []
     }
   ]
 }
