@@ -3,8 +3,8 @@ ARG PACKAGE_NAME=pkrsplitter
 
 FROM public.ecr.aws/lambda/python:3.12
 
-RUN echo PACKAGE_NAME
-RUN echo PYTHON_VERSION
+RUN echo $PACKAGE_NAME
+RUN echo $PYTHON_VERSION
 
 COPY pkrsplitter/ ${LAMBDA_TASK_ROOT}/pkrsplitter/
 
