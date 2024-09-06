@@ -26,6 +26,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Read lambda_params.json
+      id: read-json
+      run: |
+        echo "LAMBDA_PARAMS=$(jq -c . < config/lambda_params.json)" >> $GITHUB_ENV
+        echo '${{ fromJson(env.LAMBDA_PARAMS).functions }}'
+
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -63,13 +70,7 @@ jobs:
       run: |
         docker push ${{ env.IMAGE_URI }}
 
-    - name: Read lambda_params.json
-      id: read-json
-      run: |
-        echo 'LAMBDA_PARAMS<<EOF' >> $GITHUB_ENV
-        cat config/lambda_params.json >> $GITHUB_ENV
-        echo 'EOF' >> $GITHUB_ENV
-        echo '${{ fromJson(env.LAMBDA_PARAMS) }}'
+
 #        echo $(fromJson($json_text))
 #        echo $(fromJson(cat config/lambda_params.json).functions[0])
 #
