@@ -1,12 +1,11 @@
 ARG PYTHON_VERSION=3.12
+FROM public.ecr.aws/lambda/python:${PYTHON_VERSION}
+
 ARG PACKAGE_NAME=pkrsplitter
+RUN echo ${PACKAGE_NAME}
+RUN echo ${PYTHON_VERSION}
 
-FROM public.ecr.aws/lambda/python:3.12
-
-# RUN echo $PACKAGE_NAME
-RUN echo $PYTHON_VERSION
-
-COPY $PACKAGE_NAME/ ${LAMBDA_TASK_ROOT}/$PACKAGE_NAME/
+COPY ${PACKAGE_NAME}/ ${LAMBDA_TASK_ROOT}/$PACKAGE_NAME/
 
 RUN rm -rf ${LAMBDA_TASK_ROOT}/pkrsplitter/runs
 RUN  rm ${LAMBDA_TASK_ROOT}/pkrsplitter/settings.py ${LAMBDA_TASK_ROOT}/pkrsplitter/splitters/local.py

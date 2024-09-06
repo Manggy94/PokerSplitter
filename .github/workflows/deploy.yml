@@ -41,6 +41,7 @@ jobs:
     - name: Get python Version from lambda_params.json runtime
       run: |
         echo "PYTHON_VERSION=$(echo ${{ fromJson(env.LAMBDA_PARAMS).functions[0].runtime }})" | sed 's/python//' >> $GITHUB_ENV
+        echo "Python Version: ${{ env.PYTHON_VERSION }}"
 
     - name: Build docker image
       run: |
