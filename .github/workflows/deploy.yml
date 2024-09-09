@@ -147,7 +147,7 @@ jobs:
     - name: Create or update lambda function
       id: create-or-update-lambda-function
       run: |
-        ENV_TEXT=cat ${{ matrix.function.lambdaEnv }}
+        ENV_TEXT=$(cat ${{ matrix.function.lambdaEnv }})
         
         aws lambda create-function \
         --function-name ${{ matrix.function.functionName }} \
