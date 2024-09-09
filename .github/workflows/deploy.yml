@@ -153,7 +153,8 @@ jobs:
     - name: Create or update lambda function
       id: create-or-update-lambda-function
       run: |
-        ENV_VARS=$(cat ${{ matrix.function.lambdaEnv }})
+        ENV_VARS=$(jq -c . ${{ matrix.function.lambdaEnv }})
+
         aws lambda create-function \
         --function-name ${{ matrix.function.functionName }} \
         --package-type Image \
