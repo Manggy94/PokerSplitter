@@ -159,7 +159,7 @@ jobs:
         --code ImageUri=${{ env.IMAGE_URI }} \
         --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
         --timeout ${{ matrix.function.timeout }} --memory-size ${{ matrix.function.memorySize }} \
-        --environment ${{ env.ENV_TEXT} \
+        --environment ${{ env.ENV_TEXT}} \
         --description "${{ matrix.function.description }}" || \
         aws lambda update-function-configuration \
         --function-name ${{ matrix.function.functionName }} \
