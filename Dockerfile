@@ -21,9 +21,6 @@ RUN for file in -r $(cat useless_files.txt | tr -d '\r'); do rm ${file}; done
 
 WORKDIR ..
 
-RUN rm -rf ${LAMBDA_TASK_ROOT}/pkrsplitter/runs
-RUN  rm ${LAMBDA_TASK_ROOT}/pkrsplitter/settings.py ${LAMBDA_TASK_ROOT}/pkrsplitter/splitters/local.py
-
 COPY config/app_requirements.txt ${LAMBDA_TASK_ROOT}/requirements.txt
 RUN pip install -r ${LAMBDA_TASK_ROOT}/requirements.txt
 
