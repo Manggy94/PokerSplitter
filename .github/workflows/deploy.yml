@@ -83,8 +83,8 @@ jobs:
         echo "Building the Docker image ${{ env.IMAGE_NAME }}"
         docker build . \
         -t ${{ env.IMAGE_NAME}} \
-        --build-arg HANDLER=${{ fromJson(env.LAMBDA_PARAMS).functions[0].handler }} \
-        --build-arg PACKAGE_NAME=${{ fromJson(env.LAMBDA_PARAMS).functions[0].packageName }} \
+        --build-arg HANDLER=${{ matrix.function.handler }} \
+        --build-arg PACKAGE_NAME=${{ matrix.function.packageName }} \
         --build-arg PYTHON_VERSION=${{ env.PYTHON_VERSION }} \
 
 
@@ -116,7 +116,7 @@ jobs:
     - name: Extract Lambda functionName
       id: extract-function-name
       run: |
-        echo "LAMBDA_FUNCTION_NAME=$(echo ${{ fromJson(env.LAMBDA_PARAMS).functions[0].functionName }})" >> $GITHUB_ENV
+        echo "LAMBDA_FUNCTION_NAME=$(echo ${{ matrix.function.functionName }})" >> $GITHUB_ENV
 
     - name: Get function from function_name
       id: get-function-from-name
