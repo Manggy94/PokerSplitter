@@ -86,6 +86,8 @@ jobs:
         --build-arg HANDLER=${{ matrix.function.handler }} \
         --build-arg PACKAGE_NAME=${{ matrix.function.packageName }} \
         --build-arg PYTHON_VERSION=${{ env.PYTHON_VERSION }} \
+        --build-arg USELESS_DIRS=${{ matrix.function.uselessDirs }} \
+        --build-arg USELESS_FILES=${{ matrix.function.uselessFiles }}
 
 
     - name: Log in to Amazon ECR
@@ -123,5 +125,5 @@ jobs:
       run: |
         aws lambda get-function --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
 
- 
+  
 

@@ -7,8 +7,8 @@
       "handler": "pkrsplitter.lambda.history_splitter.lambda_handler",
       "functionRoleName": "LambdaS3FilesManager",
       "packageName": "pkrsplitter",
-      "uselessDirs": "",
-      "uselessFiles": ""
+      "uselessDirs": "config/useless_dirs.txt",
+      "uselessFiles": "config_useless_files.txt"
     }
   ]
 }
