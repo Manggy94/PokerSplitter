@@ -13,6 +13,7 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
     - name: Checkout code
+      id: checkout
       uses: actions/checkout@v2
     - name: Read lambda_params.json and set as environment variable
       id: set-matrix
@@ -140,7 +141,6 @@ jobs:
     - name: Create or update lambda function
       id: create-or-update-lambda-function
       run: |
-#        Create lambda function if not exists
         aws lambda create-function \
         --function-name ${{ matrix.function.functionName }} \
         --package-type Image --code ImageUri=${{ env.IMAGE_URI }} \
@@ -148,7 +148,6 @@ jobs:
         --timeout ${{ matrix.function.timeout }} --memory-size ${{ matrix.function.memorySize }} \
         --runtime ${{ matrix.function.runtime }} \--handler ${{ matrix.function.handler }} \
         --description "${{ matrix.function.description }}" || \
-#        Update lambda function if exists
         aws lambda update-function-configuration \
         --function-name ${{ matrix.function.functionName }} \
         --package-type Image \
@@ -157,9 +156,7 @@ jobs:
         --memory-size ${{ matrix.function.memorySize }} \
         --handler ${{ matrix.function.handler }} \
         --description "${{ matrix.function.description }}" && \
-#        Wait for function to be updated
         aws lambda wait function-updated --function-name {{ matrix.function.functionName }} &&
-#        Update function code
         aws lambda update-function-code \
         --function-name ${{ matrix.function.functionName }} \
         --image-uri ${{ env.IMAGE_URI }} || \
