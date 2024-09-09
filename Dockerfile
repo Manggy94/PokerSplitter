@@ -10,10 +10,13 @@ COPY ${PACKAGE_NAME}/ ${LAMBDA_TASK_ROOT}/$PACKAGE_NAME/
 COPY ${USELESS_DIRS} ${LAMBDA_TASK_ROOT}/useless_dirs.txt
 COPY ${USELESS_FILES} ${LAMBDA_TASK_ROOT}/useless_files.txt
 
-RUN echo $(cat ${LAMBDA_TASK_ROOT}/useless_dirs.txt)
-RUN echo $(cat ${LAMBDA_TASK_ROOT}/useless_files.txt)
-RUN cat ${LAMBDA_TASK_ROOT}/useless_dirs.txt | xargs rm -rf
-RUN cat ${LAMBDA_TASK_ROOT}/useless_files.txt | xargs rm
+WORKDIR ${LAMBDA_TASK_ROOT}
+RUN echo $(cat useless_dirs.txt)
+RUN echo $(cat useless_files.txt)
+RUN cat useless_dirs.txt | xargs rm -rf
+RUN cat useless_files.txt | xargs rm
+
+WORKDIR ..
 
 RUN rm -rf ${LAMBDA_TASK_ROOT}/pkrsplitter/runs
 RUN  rm ${LAMBDA_TASK_ROOT}/pkrsplitter/settings.py ${LAMBDA_TASK_ROOT}/pkrsplitter/splitters/local.py
@@ -21,5 +24,4 @@ RUN  rm ${LAMBDA_TASK_ROOT}/pkrsplitter/settings.py ${LAMBDA_TASK_ROOT}/pkrsplit
 COPY config/app_requirements.txt ${LAMBDA_TASK_ROOT}/requirements.txt
 RUN pip install -r ${LAMBDA_TASK_ROOT}/requirements.txt
 
-# Specify entrypoint for lambda
 CMD [${HANDLER}]
