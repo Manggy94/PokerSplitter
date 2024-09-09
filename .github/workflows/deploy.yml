@@ -102,55 +102,54 @@ jobs:
         --build-arg PYTHON_VERSION=${{ env.PYTHON_VERSION }} \
         --build-arg USELESS_DIRS=${{ matrix.function.uselessDirs }} \
         --build-arg USELESS_FILES=${{ matrix.function.uselessFiles }}
-
-
-    - name: Log in to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Create or update ECR repository
-      id: create-or-update-ecr-repository
-      run: |
-        aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} || aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
-
-    - name: Login Docker to Amazon ECR
-      id: login-docker
-      run: |
-        docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) ${{ env.REGISTRY_URI }}
-
-    - name: Tag image with ECR URI
-      id: tag-image
-      run: |
-        docker tag ${{ env.IMAGE_NAME }} ${{ env.IMAGE_URI }}
-
-    - name: Delete old image with tag latest or no tag
-      id: delete-old-image
-      run: |
-        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=latest
-        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=null
-
-    - name: Push image to Amazon ECR
-      id: push-image
-      run: |
-        docker push ${{ env.IMAGE_URI }}
-
-    - name: Create or update lambda function
-      id: create-or-update-lambda-function
-      run: |
-        aws lambda create-function \
-        --function-name ${{ matrix.function.functionName }} \
-        --package-type Image \
-        --code ImageUri=${{ env.IMAGE_URI }} \
-        --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
-        --timeout ${{ matrix.function.timeout }} --memory-size ${{ matrix.function.memorySize }} \
-        --description "${{ matrix.function.description }}" || \
-        aws lambda update-function-configuration \
-        --function-name ${{ matrix.function.functionName }} \
-        --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
-        --timeout ${{ matrix.function.timeout }} \
-        --memory-size ${{ matrix.function.memorySize }} \
-        --description "${{ matrix.function.description }}" && \
-        aws lambda wait function-updated --function-name ${{ matrix.function.functionName }} &&
-        aws lambda update-function-code \
-        --function-name ${{ matrix.function.functionName }} \
-        --image-uri ${{ env.IMAGE_URI }}
+#
+#    - name: Log in to Amazon ECR
+#      id: login-ecr
+#      uses: aws-actions/amazon-ecr-login@v1
+#
+#    - name: Create or update ECR repository
+#      id: create-or-update-ecr-repository
+#      run: |
+#        aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} || aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
+#
+#    - name: Login Docker to Amazon ECR
+#      id: login-docker
+#      run: |
+#        docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) ${{ env.REGISTRY_URI }}
+#
+#    - name: Tag image with ECR URI
+#      id: tag-image
+#      run: |
+#        docker tag ${{ env.IMAGE_NAME }} ${{ env.IMAGE_URI }}
+#
+#    - name: Delete old image with tag latest or no tag
+#      id: delete-old-image
+#      run: |
+#        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=latest
+#        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=null
+#
+#    - name: Push image to Amazon ECR
+#      id: push-image
+#      run: |
+#        docker push ${{ env.IMAGE_URI }}
+#
+#    - name: Create or update lambda function
+#      id: create-or-update-lambda-function
+#      run: |
+#        aws lambda create-function \
+#        --function-name ${{ matrix.function.functionName }} \
+#        --package-type Image \
+#        --code ImageUri=${{ env.IMAGE_URI }} \
+#        --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
+#        --timeout ${{ matrix.function.timeout }} --memory-size ${{ matrix.function.memorySize }} \
+#        --description "${{ matrix.function.description }}" || \
+#        aws lambda update-function-configuration \
+#        --function-name ${{ matrix.function.functionName }} \
+#        --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
+#        --timeout ${{ matrix.function.timeout }} \
+#        --memory-size ${{ matrix.function.memorySize }} \
+#        --description "${{ matrix.function.description }}" && \
+#        aws lambda wait function-updated --function-name ${{ matrix.function.functionName }} &&
+#        aws lambda update-function-code \
+#        --function-name ${{ matrix.function.functionName }} \
+#        --image-uri ${{ env.IMAGE_URI }}
