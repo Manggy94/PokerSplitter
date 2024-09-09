@@ -149,7 +149,6 @@ jobs:
         --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
         --timeout ${{ matrix.function.timeout }} \
         --memory-size ${{ matrix.function.memorySize }} \
-        --handler ${{ matrix.function.handler }} \
         --description "${{ matrix.function.description }}" && \
         aws lambda wait function-updated --function-name ${{ matrix.function.functionName }} &&
         aws lambda update-function-code \
