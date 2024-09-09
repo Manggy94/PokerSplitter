@@ -13,7 +13,6 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
     - name: Checkout code
-      id: checkout
       uses: actions/checkout@v2
     - name: Read lambda_params.json and set as environment variable
       id: set-matrix
