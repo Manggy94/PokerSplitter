@@ -33,7 +33,7 @@ jobs:
           
 
           functionMatrix=$(echo '{}' | jq --arg fn "$functionName" --arg rt "$runtime" --arg hnd "$handler" --arg frn "$functionRoleName" --arg pn "$packageName"  --arg uds "$uselessDirs" --arg ufs "$uselessFiles"\
-            '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn' | .uselessDirs = $uds | .uselessFiles = $ufs')
+            '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn | .uselessDirs = $uds | .uselessFiles = $ufs')
 
           matrix=$(echo "$matrix" | jq --argjson func "$functionMatrix" '. + [$func]')
         done <<< "$functions"
