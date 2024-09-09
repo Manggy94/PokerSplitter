@@ -29,7 +29,7 @@ def get_memory_cost(memory_results_path=MEMORY_RESULTS_PATH, speed_results_path=
     speed_df = pd.read_csv(speed_results_path, index_col=0)
     print(speed_df)
     memory_to_use_go = memory_to_use / 1024
-    print(f"Memory to use: {memory_to_use_go} Go")
+    print(f"Memory to use: {memory_to_use_go} Go / {memory_to_use} MiB")
     # Multiply speed_df_lines by the index and by the memory_to_use to get the MiBs
     multipliers = speed_df.index.values.reshape(-1, 1)
     print(multipliers.shape, speed_df.shape)
