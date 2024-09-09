@@ -36,7 +36,8 @@ jobs:
           matrix=$(echo "$matrix" | jq --argjson func "$functionMatrix" '. + [$func]')
         done <<< "$functions"
         echo "matrix=$matrix"
-        echo "matrix=$matrix" >> $GITHUB_OUTPUT
+        matrix_escaped=$(echo "$matrix" | jq -c .)
+        echo "matrix=$matrix_escaped" >> $GITHUB_OUTPUT
 #        functionMatrix=$(echo '{}' | jq --a
 #        echo "LAMBDA_PARAMS=$(jq -c . < config/lambda_params.json)" >> $GITHUB_ENV
 
