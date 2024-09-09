@@ -91,13 +91,17 @@ jobs:
         echo "PYTHON_VERSION=$(echo ${{ matrix.function.runtime }})" | sed 's/python//' >> $GITHUB_ENV
         echo "Python Version: ${{ env.PYTHON_VERSION }}"
 
+    - name: Replace handler in Dockerfile
+      run: |
+        sed -i 's#<lambda_handler>#${{ matrix.function.handler }}#g' Dockerfile
+
+
     - name: Build docker image
       id: build-image
       run: |
         echo "Building the Docker image ${{ env.IMAGE_NAME }}"
         docker build . \
         -t ${{ env.IMAGE_NAME}} \
-        --build-arg HANDLER=${{ matrix.function.handler }} \
         --build-arg PACKAGE_NAME=${{ matrix.function.packageName }} \
         --build-arg PYTHON_VERSION=${{ env.PYTHON_VERSION }} \
         --build-arg USELESS_DIRS=${{ matrix.function.uselessDirs }} \

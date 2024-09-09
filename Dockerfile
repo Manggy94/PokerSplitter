@@ -2,7 +2,6 @@ ARG PYTHON_VERSION
 FROM public.ecr.aws/lambda/python:${PYTHON_VERSION}
 
 ARG PACKAGE_NAME
-ARG HANDLER
 ARG USELESS_DIRS
 ARG USELESS_FILES
 
@@ -17,10 +16,5 @@ RUN for dir in $(cat useless_dirs.txt | tr -d '\r'); do rm -rf ${dir}; done
 RUN for file in $(cat useless_files.txt | tr -d '\r'); do rm -f ${file}; done
 RUN pip install -r requirements.txt
 
-# Créer un script shell qui sera exécuté avec le handler interpolé
-RUN echo '#!/bin/sh' > /entrypoint.sh && \
-    echo "exec ${HANDLER}" >> /entrypoint.sh && \
-    chmod +x /entrypoint.sh
 
-# Utiliser le script comme commande d'entrée
-CMD ["/entrypoint.sh"]
+CMD ["<lambda_handler>"]
