@@ -13,6 +13,7 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
     - name: Checkout code
+      id: checkout
       uses: actions/checkout@v2
     - name: Read lambda_params.json and set as environment variable
       id: set-matrix
@@ -72,9 +73,11 @@ jobs:
 
     steps:
     - name: Checkout code
+      id: checkout
       uses: actions/checkout@v2
 
     - name: Configure AWS credentials
+      id: aws-credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -82,11 +85,13 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Get python Version from lambda_params.json runtime
+      id: get-python-version
       run: |
         echo "PYTHON_VERSION=$(echo ${{ matrix.function.runtime }})" | sed 's/python//' >> $GITHUB_ENV
         echo "Python Version: ${{ env.PYTHON_VERSION }}"
 
     - name: Build docker image
+      id: build-image
       run: |
         echo "Building the Docker image ${{ env.IMAGE_NAME }}"
         docker build . \
@@ -103,23 +108,28 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Create or update ECR repository
+      id: create-or-update-ecr-repository
       run: |
         aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} || aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
 
     - name: Login Docker to Amazon ECR
+      id: login-docker
       run: |
         docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) ${{ env.REGISTRY_URI }}
 
     - name: Tag image with ECR URI
+      id: tag-image
       run: |
         docker tag ${{ env.IMAGE_NAME }} ${{ env.IMAGE_URI }}
 
     - name: Delete old image with tag latest or no tag
+      id: delete-old-image
       run: |
         aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=latest
         aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=null
 
     - name: Push image to Amazon ECR
+      id: push-image
       run: |
         docker push ${{ env.IMAGE_URI }}
 
@@ -128,30 +138,29 @@ jobs:
       run: |
         aws lambda get-function --function-name ${{ matrix.function.functionName }}
 
-    - name: Update function code or create function
+    - name: Create or update lambda function
+      id: create-or-update-lambda-function
       run: |
-        aws lambda update-function-code \
-        --function-name ${{ matrix.function.functionName }} \
-        --package-type Image \
-        --image-uri ${{ env.IMAGE_URI }} || \
+#        Create lambda function if not exists
         aws lambda create-function \
         --function-name ${{ matrix.function.functionName }} \
         --package-type Image --code ImageUri=${{ env.IMAGE_URI }} \
         --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
         --timeout ${{ matrix.function.timeout }} --memory-size ${{ matrix.function.memorySize }} \
         --runtime ${{ matrix.function.runtime }} \--handler ${{ matrix.function.handler }} \
-        --description ${{ matrix.function.description }}
-
-    - name: Update function configuration
-      run: |
+        --description "${{ matrix.function.description }}" || \
+#        Update lambda function if exists
         aws lambda update-function-configuration \
         --function-name ${{ matrix.function.functionName }} \
         --package-type Image \
         --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
         --timeout ${{ matrix.function.timeout }} \
         --memory-size ${{ matrix.function.memorySize }} \
-        --runtime ${{ matrix.function.runtime }} \
         --handler ${{ matrix.function.handler }} \
-        --description ${{ matrix.function.description }}
-
-    
+        --description "${{ matrix.function.description }}" && \
+#        Wait for function to be updated
+        aws lambda wait function-updated --function-name {{ matrix.function.functionName }} &&
+#        Update function code
+        aws lambda update-function-code \
+        --function-name ${{ matrix.function.functionName }} \
+        --image-uri ${{ env.IMAGE_URI }} || \
