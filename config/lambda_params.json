@@ -11,7 +11,8 @@
       "uselessFiles": "config/useless_files.txt",
       "appRequirements": "config/app_requirements.txt",
       "memorySize": 128,
-      "timeout": 60
+      "timeout": 60,
+      "lambdaEnv": "config/lambda_env.json"
     }
   ]
 }
