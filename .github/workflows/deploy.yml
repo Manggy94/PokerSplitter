@@ -127,11 +127,6 @@ jobs:
         echo $(fromJson($json_text))
         echo $(fromJson(cat config/lambda_params.json).functions[0])
 
-    - name: Extract Lambda functionName
-      id: extract-function-name
-      run: |
-        echo "LAMBDA_FUNCTION_NAME=$(echo ${{ fromJson(env.json).functions[0].functionName }})" >> $GITHUB_ENV
-
     - name: Deploy to AWS Lambda
       uses: appleboy/lambda-action@master
       with:
