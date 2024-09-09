@@ -119,7 +119,7 @@ jobs:
         echo "LAMBDA_FUNCTION_NAME=$(echo ${{ fromJson(env.LAMBDA_PARAMS).functions[0].functionName }})" >> $GITHUB_ENV
 
     - name: Get function from function_name
-      id: get-function
+      id: get-function-from-name
       run: |
         aws lambda get-function --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
 
@@ -131,13 +131,6 @@ jobs:
       id: extract-function-name
       run: |
         echo "LAMBDA_FUNCTION_NAME=$(echo ${{ fromJson(env.json).functions[0].functionName }})" >> $GITHUB_ENV
-
-
-
-    - name: Get function from function_name
-      id: get-function
-      run: |
-        aws lambda get-function --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
 
     - name: Deploy to AWS Lambda
       uses: appleboy/lambda-action@master
