@@ -6,82 +6,102 @@ on:
       - master
 
 jobs:
-  deploy:
+
+  build_matrix:
     runs-on: ubuntu-latest
-    env:
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-      AWS_NAMESPACE: ${{ secrets.AWS_NAMESPACE }}
-      AWS_PACKAGE_NAME: ${{ secrets.AWS_PACKAGE_NAME }}
-      REPOSITORY_NAME: ${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}
-      TAG: latest
-      IMAGE_NAME: ${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:latest
-      REGISTRY_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-      IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:latest
-      COMMIT_HASH: ${{ github.sha }}
-      COMMIT_TAG: ${{ github.ref }}
-
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
     - name: Read lambda_params.json and set as environment variable
       id: read-json
       run: |
+        functions=$(jq -c '.functions[]' < config/lambda_params.json)
+        matrix={\functionName\":[]}
+        echo $matrix
+        echo $functions
         echo "LAMBDA_PARAMS=$(jq -c . < config/lambda_params.json)" >> $GITHUB_ENV
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-
-    - name: Get python Version from lambda_params.json runtime
-      run: |
-        echo "PYTHON_VERSION=$(echo ${{ fromJson(env.LAMBDA_PARAMS).functions[0].runtime }})" | sed 's/python//' >> $GITHUB_ENV
-        echo "Python Version: ${{ env.PYTHON_VERSION }}"
-
-    - name: Build docker image
-      run: |
-        echo "Building the Docker image ${{ env.IMAGE_NAME }}"
-        docker build --build-arg PYTHON_VERSION=${{ env.PYTHON_VERSION }} --build-arg PACKAGE_NAME=${{ fromJson(env.LAMBDA_PARAMS).functions[0].packageName }} -t ${{ env.IMAGE_NAME}} . 
-
-    - name: Log in to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Create or update ECR repository
-      run: |
-        aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} || aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
-
-    - name: Login Docker to Amazon ECR
-      run: |
-        docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) ${{ env.REGISTRY_URI }}
-
-    - name: Tag image with ECR URI
-      run: |
-        docker tag ${{ env.IMAGE_NAME }} ${{ env.IMAGE_URI }}
-
-    - name: Delete old image with tag latest or no tag
-      run: |
-        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=latest
-        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=null
-
-    - name: Push image to Amazon ECR
-      run: |
-        docker push ${{ env.IMAGE_URI }}
-
-    - name: Extract Lambda functionName
-      id: extract-function-name
-      run: |
-        echo "LAMBDA_FUNCTION_NAME=$(echo ${{ fromJson(env.LAMBDA_PARAMS).functions[0].functionName }})" >> $GITHUB_ENV
-
-    - name: Get function from function_name
-      id: get-function
-      run: |
-        aws lambda get-function --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
+#  deploy:
+#    runs-on: ubuntu-latest
+#    env:
+#      AWS_REGION: ${{ secrets.AWS_REGION }}
+#      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+#      AWS_NAMESPACE: ${{ secrets.AWS_NAMESPACE }}
+#      AWS_PACKAGE_NAME: ${{ secrets.AWS_PACKAGE_NAME }}
+#      REPOSITORY_NAME: ${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}
+#      TAG: latest
+#      IMAGE_NAME: ${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:latest
+#      REGISTRY_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+#      IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.AWS_NAMESPACE }}/${{ secrets.AWS_PACKAGE_NAME }}:latest
+#      COMMIT_HASH: ${{ github.sha }}
+#      COMMIT_TAG: ${{ github.ref }}
+#
+#
+#    steps:
+#    - name: Checkout code
+#      uses: actions/checkout@v2
+#
+#    - name: Read lambda_params.json and set as environment variable
+#      id: read-json
+#      run: |
+#        echo "LAMBDA_PARAMS=$(jq -c . < config/lambda_params.json)" >> $GITHUB_ENV
+#
+#    - name: Configure AWS credentials
+#      uses: aws-actions/configure-aws-credentials@v4
+#      with:
+#        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        aws-region: ${{ secrets.AWS_REGION }}
+#
+#    - name: Get python Version from lambda_params.json runtime
+#      run: |
+#        echo "PYTHON_VERSION=$(echo ${{ fromJson(env.LAMBDA_PARAMS).functions[0].runtime }})" | sed 's/python//' >> $GITHUB_ENV
+#        echo "Python Version: ${{ env.PYTHON_VERSION }}"
+#
+#    - name: Build docker image
+#      run: |
+#        echo "Building the Docker image ${{ env.IMAGE_NAME }}"
+#        docker build . \
+#        -t ${{ env.IMAGE_NAME}} \
+#        --build-arg HANDLER=${{ fromJson(env.LAMBDA_PARAMS).functions[0].handler }} \
+#        --build-arg PACKAGE_NAME=${{ fromJson(env.LAMBDA_PARAMS).functions[0].packageName }} \
+#        --build-arg PYTHON_VERSION=${{ env.PYTHON_VERSION }} \
+#
+#
+#    - name: Log in to Amazon ECR
+#      id: login-ecr
+#      uses: aws-actions/amazon-ecr-login@v1
+#
+#    - name: Create or update ECR repository
+#      run: |
+#        aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} || aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
+#
+#    - name: Login Docker to Amazon ECR
+#      run: |
+#        docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) ${{ env.REGISTRY_URI }}
+#
+#    - name: Tag image with ECR URI
+#      run: |
+#        docker tag ${{ env.IMAGE_NAME }} ${{ env.IMAGE_URI }}
+#
+#    - name: Delete old image with tag latest or no tag
+#      run: |
+#        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=latest
+#        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=null
+#
+#    - name: Push image to Amazon ECR
+#      run: |
+#        docker push ${{ env.IMAGE_URI }}
+#
+#    - name: Extract Lambda functionName
+#      id: extract-function-name
+#      run: |
+#        echo "LAMBDA_FUNCTION_NAME=$(echo ${{ fromJson(env.LAMBDA_PARAMS).functions[0].functionName }})" >> $GITHUB_ENV
+#
+#    - name: Get function from function_name
+#      id: get-function
+#      run: |
+#        aws lambda get-function --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
 
 
 #        echo $(fromJson($json_text))
