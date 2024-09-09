@@ -17,6 +17,10 @@ RUN for dir in $(cat useless_dirs.txt | tr -d '\r'); do rm -rf ${dir}; done
 RUN for file in $(cat useless_files.txt | tr -d '\r'); do rm -f ${file}; done
 RUN pip install -r requirements.txt
 
-ENV LAMBDA_HANDLER=${HANDLER}
+# Créer un script shell qui sera exécuté avec le handler interpolé
+RUN echo '#!/bin/sh' > /entrypoint.sh && \
+    echo "exec ${HANDLER}" >> /entrypoint.sh && \
+    chmod +x /entrypoint.sh
 
-CMD ["python", "-c", "import os; from importlib import import_module; handler = os.environ['LAMBDA_HANDLER'].split('.'); module = import_module(handler[0]); getattr(module, handler[1])()"]
+# Utiliser le script comme commande d'entrée
+CMD ["/entrypoint.sh"]
