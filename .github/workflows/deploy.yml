@@ -34,6 +34,7 @@ jobs:
           timeout=$(echo "$function" | jq -r '.timeout')
 
           functionMatrix=$(echo '{}' | jq --arg fn "$functionName" \
+          --arg desc "$description" \
           --arg rt "$runtime" \
           --arg hnd "$handler" \
           --arg frn "$functionRoleName" \
@@ -42,7 +43,7 @@ jobs:
           --arg ufs "$uselessFiles" \
           --arg ms "$memorySize" \
           --arg to "$timeout" \
-          '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn | .uselessDirs = $uds | .uselessFiles = $ufs | .memorySize = $ms | .timeout = $to')
+          '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn | .uselessDirs = $uds | .uselessFiles = $ufs | .memorySize = $ms | .timeout = $to | .description = $desc')
 
           matrix=$(echo "$matrix" | jq --argjson func "$functionMatrix" '. + [$func]')
         done <<< "$functions"
@@ -143,13 +144,13 @@ jobs:
       run: |
         aws lambda create-function \
         --function-name ${{ matrix.function.functionName }} \
-        --package-type Image --code ImageUri=${{ env.IMAGE_URI }} \
+        --package-type Image \
+        --code ImageUri=${{ env.IMAGE_URI }} \
         --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
         --timeout ${{ matrix.function.timeout }} --memory-size ${{ matrix.function.memorySize }} \
         --description "${{ matrix.function.description }}" || \
         aws lambda update-function-configuration \
         --function-name ${{ matrix.function.functionName }} \
-        --package-type Image \
         --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
         --timeout ${{ matrix.function.timeout }} \
         --memory-size ${{ matrix.function.memorySize }} \
