@@ -32,8 +32,8 @@ jobs:
           uselessFiles=$(echo "$function" | jq -r '.uselessFiles')
           
 
-          functionMatrix=$(echo '{}' | jq --arg fn "$functionName" --arg rt "$runtime" --arg hnd "$handler" --arg frn "$functionRoleName" --arg pn "$packageName" \
-            '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn')
+          functionMatrix=$(echo '{}' | jq --arg fn "$functionName" --arg rt "$runtime" --arg hnd "$handler" --arg frn "$functionRoleName" --arg pn "$packageName"  --arg uds "$uselessDirs" --arg ufs "$uselessFiles"\
+            '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn' | .uselessDirs = $uds | .uselessFiles = $ufs')
 
           matrix=$(echo "$matrix" | jq --argjson func "$functionMatrix" '. + [$func]')
         done <<< "$functions"
@@ -89,41 +89,41 @@ jobs:
         --build-arg USELESS_DIRS=${{ matrix.function.uselessDirs }} \
         --build-arg USELESS_FILES=${{ matrix.function.uselessFiles }}
 
-
-    - name: Log in to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Create or update ECR repository
-      run: |
-        aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} || aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
-
-    - name: Login Docker to Amazon ECR
-      run: |
-        docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) ${{ env.REGISTRY_URI }}
-
-    - name: Tag image with ECR URI
-      run: |
-        docker tag ${{ env.IMAGE_NAME }} ${{ env.IMAGE_URI }}
-
-    - name: Delete old image with tag latest or no tag
-      run: |
-        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=latest
-        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=null
-
-    - name: Push image to Amazon ECR
-      run: |
-        docker push ${{ env.IMAGE_URI }}
-
-    - name: Extract Lambda functionName
-      id: extract-function-name
-      run: |
-        echo "LAMBDA_FUNCTION_NAME=$(echo ${{ matrix.function.functionName }})" >> $GITHUB_ENV
-
-    - name: Get function from function_name
-      id: get-function-from-name
-      run: |
-        aws lambda get-function --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
-
-  
-
+#
+#    - name: Log in to Amazon ECR
+#      id: login-ecr
+#      uses: aws-actions/amazon-ecr-login@v1
+#
+#    - name: Create or update ECR repository
+#      run: |
+#        aws ecr describe-repositories --repository-names ${{ env.REPOSITORY_NAME }} || aws ecr create-repository --repository-name ${{ env.REPOSITORY_NAME }}
+#
+#    - name: Login Docker to Amazon ECR
+#      run: |
+#        docker login -u AWS -p $(aws ecr get-login-password --region ${{ secrets.AWS_REGION }}) ${{ env.REGISTRY_URI }}
+#
+#    - name: Tag image with ECR URI
+#      run: |
+#        docker tag ${{ env.IMAGE_NAME }} ${{ env.IMAGE_URI }}
+#
+#    - name: Delete old image with tag latest or no tag
+#      run: |
+#        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=latest
+#        aws ecr batch-delete-image --repository-name ${{ env.REPOSITORY_NAME }} --image-ids imageTag=null
+#
+#    - name: Push image to Amazon ECR
+#      run: |
+#        docker push ${{ env.IMAGE_URI }}
+#
+#    - name: Extract Lambda functionName
+#      id: extract-function-name
+#      run: |
+#        echo "LAMBDA_FUNCTION_NAME=$(echo ${{ matrix.function.functionName }})" >> $GITHUB_ENV
+#
+#    - name: Get function from function_name
+#      id: get-function-from-name
+#      run: |
+#        aws lambda get-function --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
+#
+#
+#

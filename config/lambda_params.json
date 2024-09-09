@@ -8,7 +8,7 @@
       "functionRoleName": "LambdaS3FilesManager",
       "packageName": "pkrsplitter",
       "uselessDirs": "config/useless_dirs.txt",
-      "uselessFiles": "config_useless_files.txt"
+      "uselessFiles": "config/useless_files.txt"
     }
   ]
 }
