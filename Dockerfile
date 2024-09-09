@@ -13,8 +13,11 @@ COPY ${USELESS_FILES} ${LAMBDA_TASK_ROOT}/useless_files.txt
 WORKDIR ${LAMBDA_TASK_ROOT}
 RUN echo $(cat useless_dirs.txt)
 RUN echo $(cat useless_files.txt)
-RUN cat useless_dirs.txt | xargs rm -rf
-RUN cat useless_files.txt | xargs rm
+# Remove useless files and directories
+RUN for dir in $(cat useless_dirs.txt); do rm -rf ${dir}; done
+RUN for file in $(cat useless_files.txt); do rm ${file}; done
+# RUN cat useless_dirs.txt | xargs rm -rf
+# RUN cat useless_files.txt | xargs rm
 
 WORKDIR ..
 
