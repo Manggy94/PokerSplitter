@@ -11,6 +11,7 @@ COPY ${USELESS_DIRS} ${LAMBDA_TASK_ROOT}/useless_dirs.txt
 COPY ${USELESS_FILES} ${LAMBDA_TASK_ROOT}/useless_files.txt
 
 RUN ls ${LAMBDA_TASK_ROOT}
+RUN ls ${LAMBDA_TASK_ROOT}/useless_dirs.txt
 RUN echo $(cat ${LAMBDA_TASK_ROOT}/useless_dirs.txt)
 RUN echo $(cat ${LAMBDA_TASK_ROOT}/useless_files.txt)
 # RUN cat ${LAMBDA_TASK_ROOT}/useless_dirs.txt | xargs rm -rf
