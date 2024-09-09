@@ -42,8 +42,7 @@ jobs:
           --arg ufs "$uselessFiles" \
           --arg ms "$memorySize" \
           --arg to "$timeout" \
-          '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn | \
-          .uselessDirs = $uds | .uselessFiles = $ufs | .memorySize = $ms | .timeout = $to')
+          '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn | .uselessDirs = $uds | .uselessFiles = $ufs | .memorySize = $ms | .timeout = $to')
 
           matrix=$(echo "$matrix" | jq --argjson func "$functionMatrix" '. + [$func]')
         done <<< "$functions"
