@@ -19,7 +19,6 @@ jobs:
       run: |
         functions=$(jq -c '.functions[]' < config/lambda_params.json)
         matrix="[]"
-        echo $matrix
         echo $functions
         while IFS= read -r function; do
           functionName=$(echo "$function" | jq -r '.functionName')
@@ -31,8 +30,7 @@ jobs:
           uselessDirs=$(echo "$function" | jq -r '.uselessDirs')
           uselessFiles=$(echo "$function" | jq -r '.uselessFiles')
           memorySize=$(echo "$function" | jq -r '.memorySize')
-            timeout=$(echo "$function" | jq -r '.timeout')
-          
+          timeout=$(echo "$function" | jq -r '.timeout')
 
           functionMatrix=$(echo '{}' | jq \ 
           --arg fn "$functionName" \
