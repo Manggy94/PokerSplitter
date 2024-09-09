@@ -9,6 +9,7 @@
       "packageName": "pkrsplitter",
       "uselessDirs": "config/useless_dirs.txt",
       "uselessFiles": "config/useless_files.txt",
+      "appRequirements": "config/app_requirements.txt",
       "memorySize": 128,
       "timeout": 60
     }

@@ -32,6 +32,7 @@ jobs:
           uselessFiles=$(echo "$function" | jq -r '.uselessFiles')
           memorySize=$(echo "$function" | jq -r '.memorySize')
           timeout=$(echo "$function" | jq -r '.timeout')
+          appRequirements=$(echo "$function" | jq -r '.appRequirements')
 
           functionMatrix=$(echo '{}' | jq --arg fn "$functionName" \
           --arg desc "$description" \
@@ -43,7 +44,8 @@ jobs:
           --arg ufs "$uselessFiles" \
           --arg ms "$memorySize" \
           --arg to "$timeout" \
-          '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn | .uselessDirs = $uds | .uselessFiles = $ufs | .memorySize = $ms | .timeout = $to | .description = $desc')
+          --arg ar "$appRequirements" \
+          '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn | .uselessDirs = $uds | .uselessFiles = $ufs | .memorySize = $ms | .timeout = $to | .description = $desc | .appRequirements = $ar')
 
           matrix=$(echo "$matrix" | jq --argjson func "$functionMatrix" '. + [$func]')
         done <<< "$functions"
@@ -105,7 +107,8 @@ jobs:
         --build-arg PACKAGE_NAME=${{ matrix.function.packageName }} \
         --build-arg PYTHON_VERSION=${{ env.PYTHON_VERSION }} \
         --build-arg USELESS_DIRS=${{ matrix.function.uselessDirs }} \
-        --build-arg USELESS_FILES=${{ matrix.function.uselessFiles }}
+        --build-arg USELESS_FILES=${{ matrix.function.uselessFiles }}\
+        --build-arg APP_REQUIREMENTS=${{ matrix.function.appRequirements }}
 
     - name: Log in to Amazon ECR
       id: login-ecr
