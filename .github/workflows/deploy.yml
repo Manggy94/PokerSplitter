@@ -123,17 +123,5 @@ jobs:
       run: |
         aws lambda get-function --function-name ${{ env.LAMBDA_FUNCTION_NAME }}
 
-
-        echo $(fromJson($json_text))
-        echo $(fromJson(cat config/lambda_params.json).functions[0])
-
-    - name: Deploy to AWS Lambda
-      uses: appleboy/lambda-action@master
-      with:
-        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws_region: ${{ secrets.AWS_REGION }}
-        function_name: my-lambda-function  # Remplacez par le nom de votre fonction Lambda
-        zip_file: path_to_your_deployment_package.zip  # Chemin vers le fichier zip si nécessaire
-        handler_name: pkrsplitter.lambda.history_splitter.lambda_handler  # Nom du handler
+ 
 
