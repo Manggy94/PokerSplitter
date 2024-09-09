@@ -132,6 +132,7 @@ jobs:
       run: |
         aws lambda update-function-code \
         --function-name ${{ matrix.function.functionName }} \
+        --package-type Image \
         --image-uri ${{ env.IMAGE_URI }} || \
         aws lambda create-function \
         --function-name ${{ matrix.function.functionName }} \
