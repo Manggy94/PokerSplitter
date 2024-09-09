@@ -13,13 +13,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Read lambda_params.json and set as environment variable
-      id: read-json
+      id: set-matrix
       run: |
         functions=$(jq -c '.functions[]' < config/lambda_params.json)
-        matrix={\functionName\":[]}
+        matrix="[]"
         echo $matrix
         echo $functions
-        echo "LAMBDA_PARAMS=$(jq -c . < config/lambda_params.json)" >> $GITHUB_ENV
+        for function in $functions; do
+          functionName=$(echo $function | jq -r '.functionName')
+        done
+#        functionMatrix=$(echo '{}' | jq --a
+#        echo "LAMBDA_PARAMS=$(jq -c . < config/lambda_params.json)" >> $GITHUB_ENV
 
 #  deploy:
 #    runs-on: ubuntu-latest
