@@ -159,4 +159,4 @@ jobs:
         aws lambda wait function-updated --function-name {{ matrix.function.functionName }} &&
         aws lambda update-function-code \
         --function-name ${{ matrix.function.functionName }} \
-        --image-uri ${{ env.IMAGE_URI }} || \
+        --image-uri ${{ env.IMAGE_URI }}
