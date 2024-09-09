@@ -14,8 +14,8 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 RUN echo $(cat useless_dirs.txt)
 RUN echo $(cat useless_files.txt)
 # Remove useless files and directories
-RUN for dir in -r $(cat useless_dirs.txt|tr -d '\r'); do rm -rf ${dir}; done
-RUN for file in -r $(cat useless_files.txt|tr -d '\r'); do rm ${file}; done
+RUN for dir in -r $(cat useless_dirs.txt | tr -d '\r'); do rm -rf ${dir}; done
+RUN for file in -r $(cat useless_files.txt | tr -d '\r'); do rm ${file}; done
 # RUN cat useless_dirs.txt | xargs rm -rf
 # RUN cat useless_files.txt | xargs rm
 
