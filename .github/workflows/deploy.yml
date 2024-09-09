@@ -32,8 +32,7 @@ jobs:
           memorySize=$(echo "$function" | jq -r '.memorySize')
           timeout=$(echo "$function" | jq -r '.timeout')
 
-          functionMatrix=$(echo '{}' | jq \ 
-          --arg fn "$functionName" \
+          functionMatrix=$(echo '{}' | jq --arg fn "$functionName" \
           --arg rt "$runtime" \
           --arg hnd "$handler" \
           --arg frn "$functionRoleName" \
