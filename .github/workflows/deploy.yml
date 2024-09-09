@@ -46,7 +46,7 @@ jobs:
           --arg ms "$memorySize" \
           --arg to "$timeout" \
           --arg ar "$appRequirements" \
-          --argjson env "$lambdaEnv" \
+          --arg env "$lambdaEnv" \
           '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn | .uselessDirs = $uds | .uselessFiles = $ufs | .memorySize = $ms | .timeout = $to | .description = $desc | .appRequirements = $ar | .lambdaEnv = $env')
 
           matrix=$(echo "$matrix" | jq --argjson func "$functionMatrix" '. + [$func]')
