@@ -17,4 +17,4 @@ RUN for dir in $(cat useless_dirs.txt | tr -d '\r'); do rm -rf ${dir}; done
 RUN for file in $(cat useless_files.txt | tr -d '\r'); do rm ${file}; done
 RUN pip install -r requirements.txt
 
-CMD [ $(echo ${HANDLER}) ]
+CMD [ "${HANDLER}" ]
