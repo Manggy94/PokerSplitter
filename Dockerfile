@@ -8,8 +8,8 @@ ARG USELESS_FILES
 
 COPY ${PACKAGE_NAME}/ ${LAMBDA_TASK_ROOT}/$PACKAGE_NAME/
 COPY config/lambda_entrypoint.sh ${LAMBDA_TASK_ROOT}/lambda_entrypoint.sh
-COPY USELESS_DIRS ${LAMBDA_TASK_ROOT}/useless_dirs.txt
-COPY USELESS_FILES ${LAMBDA_TASK_ROOT}/useless_files.txt
+COPY ${USELESS_DIRS} ${LAMBDA_TASK_ROOT}/useless_dirs.txt
+COPY ${USELESS_FILES} ${LAMBDA_TASK_ROOT}/useless_files.txt
 
 RUN cat ${LAMBDA_TASK_ROOT}/useless_dirs.txt
 RUN cat ${LAMBDA_TASK_ROOT}/useless_files.txt
