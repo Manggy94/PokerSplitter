@@ -19,10 +19,20 @@ jobs:
         matrix="[]"
         echo $matrix
         echo $functions
-        for function in $functions; do
-          functionName=$(echo $function | jq -r '.functionName')
-          echo $functionName
-        done
+        while IFS= read -r function; do
+          functionName=$(echo "$function" | jq -r '.functionName')
+          runtime=$(echo "$function" | jq -r '.runtime')
+          handler=$(echo "$function" | jq -r '.handler')
+          functionRoleName=$(echo "$function" | jq -r '.functionRoleName')
+          packageName=$(echo "$function" | jq -r '.packageName')
+
+          functionMatrix=$(echo '{}' | jq --arg fn "$functionName" --arg rt "$runtime" --arg hnd "$handler" --arg frn "$functionRoleName" --arg pn "$packageName" \
+            '.functionName = $fn | .runtime = $rt | .handler = $hnd | .functionRoleName = $frn | .packageName = $pn')
+
+          matrix=$(echo "$matrix" | jq --argjson func "$functionMatrix" '. + [$func]')
+        done <<< "$functions"
+        echo $matrix
+
 #        functionMatrix=$(echo '{}' | jq --a
 #        echo "LAMBDA_PARAMS=$(jq -c . < config/lambda_params.json)" >> $GITHUB_ENV
 
