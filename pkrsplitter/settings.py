@@ -1,8 +1,6 @@
 """This module defines the directories used by the pkrsplitter package."""
 import os
 
-# print all environment variables
-
 DATA_DIR = os.environ.get("POKER_DATA_DIR")
 HISTORY_DIR = os.path.join(DATA_DIR, "histories")
 RAW_HISTORY_DIR = os.path.join(HISTORY_DIR, "raw")
