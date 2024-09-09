@@ -107,7 +107,7 @@ jobs:
         --build-arg PACKAGE_NAME=${{ matrix.function.packageName }} \
         --build-arg PYTHON_VERSION=${{ env.PYTHON_VERSION }} \
         --build-arg USELESS_DIRS=${{ matrix.function.uselessDirs }} \
-        --build-arg USELESS_FILES=${{ matrix.function.uselessFiles }}\
+        --build-arg USELESS_FILES=${{ matrix.function.uselessFiles }} \
         --build-arg APP_REQUIREMENTS=${{ matrix.function.appRequirements }}
 
     - name: Log in to Amazon ECR
