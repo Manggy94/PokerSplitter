@@ -147,20 +147,22 @@ jobs:
     - name: Create or update lambda function
       id: create-or-update-lambda-function
       run: |
+        ENV_TEXT=cat ${{ matrix.function.lambdaEnv }}
+        
         aws lambda create-function \
         --function-name ${{ matrix.function.functionName }} \
         --package-type Image \
         --code ImageUri=${{ env.IMAGE_URI }} \
         --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
         --timeout ${{ matrix.function.timeout }} --memory-size ${{ matrix.function.memorySize }} \
-        --environment "${{ matrix.function.lambdaEnv }}" \
+        --environment $ENV_TEXT \
         --description "${{ matrix.function.description }}" || \
         aws lambda update-function-configuration \
         --function-name ${{ matrix.function.functionName }} \
         --role arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/${{ matrix.function.functionRoleName }} \
         --timeout ${{ matrix.function.timeout }} \
         --memory-size ${{ matrix.function.memorySize }} \
-        --environment "${{ matrix.function.lambdaEnv }}" \
+        --environment $ENV_TEXT \
         --description "${{ matrix.function.description }}" && \
         aws lambda wait function-updated --function-name ${{ matrix.function.functionName }} &&
         aws lambda update-function-code \
