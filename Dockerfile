@@ -14,7 +14,9 @@ COPY config/app_requirements.txt ${LAMBDA_TASK_ROOT}/requirements.txt
 WORKDIR ${LAMBDA_TASK_ROOT}
 
 RUN for dir in $(cat useless_dirs.txt | tr -d '\r'); do rm -rf ${dir}; done
-RUN for file in $(cat useless_files.txt | tr -d '\r'); do rm ${file}; done
+RUN for file in $(cat useless_files.txt | tr -d '\r'); do rm -f ${file}; done
 RUN pip install -r requirements.txt
 
-CMD [ "${HANDLER}" ]
+ENV LAMBDA_HANDLER=${HANDLER}
+
+CMD ["python", "-c", "import os; from importlib import import_module; handler = os.environ['LAMBDA_HANDLER'].split('.'); module = import_module(handler[0]); getattr(module, handler[1])()"]
